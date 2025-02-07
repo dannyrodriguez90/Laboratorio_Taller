@@ -56,3 +56,32 @@ export const saveAppointment = async (req, res) => {
     }); 
   }
 };
+
+
+export const getAppointmentsByUser = async (req, res) => {
+  let { userId } = req.params
+  userId = userId.trim()
+ 
+  try {
+    const appointments = await Appointment.find({ user: userId })
+ 
+    if (!appointments.length) {
+      return res.status(404).json({
+        success: false,
+        message: "No se encontraron citas para este usuario",
+      })
+    }
+ 
+    res.status(200).json({
+      success: true,
+      total: appointments.length,
+      appointments,
+    })
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error al obtener las citas del usuario",
+      error,
+    })
+  }
+}
